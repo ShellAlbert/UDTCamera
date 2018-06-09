@@ -1,15 +1,9 @@
 #include <QApplication>
-#include <zvideorxthread.h>
-#include <zimgdisplayer.h>
+#include <zmainwindow.h>
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
-    ZVideoRxThread videoRx;
-    ZImgDisplayer imgDisp;
-    QObject::connect(&videoRx,SIGNAL(ZSigNewImg(QImage)),&imgDisp,SLOT(ZSlotShowImg(QImage)));
-
-    imgDisp.show();
-    videoRx.ZStartThread();
+    ZMainWindow mainWin;
+    mainWin.show();
     return app.exec();
 }

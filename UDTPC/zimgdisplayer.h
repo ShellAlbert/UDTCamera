@@ -5,23 +5,25 @@
 #include <QtGui/QImage>
 #include <QVector>
 #include <QTimer>
+#include <zvideorxthread.h>
 class ZImgDisplayer:public QWidget
 {
     Q_OBJECT
 public:
-    ZImgDisplayer();
+    ZImgDisplayer(qint32 nUDPPort);
+    ~ZImgDisplayer();
 
 public slots:
     void ZSlotShowImg(QImage img);
-private:
-
+signals:
+    void ZSigMsg(const QString &msg);
 protected:
     void paintEvent(QPaintEvent *e);
-
+    QSize sizeHint() const;
 private:
-    QVector<QImage> m_vecImg;
-    QTimer *m_timer;
     QImage m_img;
+public:
+    ZVideoRxThread *m_videoRx;
 };
 
 #endif // ZIMGDISPLAYER_H

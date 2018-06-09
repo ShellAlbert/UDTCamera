@@ -6,7 +6,7 @@ class ZVideoRxThread : public QThread
 {
     Q_OBJECT
 public:
-    ZVideoRxThread();
+    ZVideoRxThread(qint32 nUDPPort);
     ~ZVideoRxThread();
 
     qint32 ZStartThread();
@@ -17,8 +17,10 @@ protected:
 signals:
     void ZSigNewImg(const QImage &img);
     void ZSigDisconnected();
+    void ZSigMsg(const QString &msg);
 private:
     bool m_bExitFlag;
+    qint32 m_nUDPPort;
 };
 
 #endif // ZVIDEORXTHREAD_H

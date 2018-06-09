@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     udt4/src/queue.cpp \
     udt4/src/window.cpp \
     zvideorxthread.cpp \
-    zimgdisplayer.cpp
+    zimgdisplayer.cpp \
+    zmainwindow.cpp
 
 HEADERS += \
     udt4/src/api.h \
@@ -47,7 +48,8 @@ HEADERS += \
     udt4/src/udt.h \
     udt4/src/window.h \
     zvideorxthread.h \
-    zimgdisplayer.h
+    zimgdisplayer.h \
+    zmainwindow.h
 
 DEFINES += __MINGW__
 LIBS += -lwsock32 -lws2_32

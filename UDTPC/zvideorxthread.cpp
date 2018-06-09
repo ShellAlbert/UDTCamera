@@ -18,9 +18,10 @@ void char42int(const char *pChar,int *pInt)
     *(pIntChar+2)=*(pChar+1);
     *(pIntChar+3)=*(pChar+0);
 }
-ZVideoRxThread::ZVideoRxThread()
+ZVideoRxThread::ZVideoRxThread(qint32 nUDPPort)
 {
     this->m_bExitFlag=false;
+    this->m_nUDPPort=nUDPPort;
 }
 ZVideoRxThread::~ZVideoRxThread()
 {
