@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <QDebug>
-
+//#define USE_TCP 1
 int main(int argc, char *argv[])
 {
 
@@ -21,8 +21,11 @@ int main(int argc, char *argv[])
 
     hints.ai_flags = AI_PASSIVE;
     hints.ai_family = AF_INET;
+#ifdef USE_TCP
     hints.ai_socktype = SOCK_STREAM;
-    //hints.ai_socktype = SOCK_DGRAM;
+#else
+    hints.ai_socktype = SOCK_DGRAM;
+#endif
 
     std::string service("9000");
     if (0!=getaddrinfo(NULL, service.c_str(), &hints, &res))

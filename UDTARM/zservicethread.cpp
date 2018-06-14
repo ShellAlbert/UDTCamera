@@ -20,22 +20,19 @@ void int2char4(const int intVal,char *pChar)
 QImage cvMat_to_QImage(const cv::Mat &mat ) {
     switch ( mat.type() )
     {
-    // 8-bit, 4 channel
-    case CV_8UC4:
+    case CV_8UC4:// 8-bit, 4 channel
     {
         QImage image( mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB32 );
         return image;
     }
 
-        // 8-bit, 3 channel
-    case CV_8UC3:
+    case CV_8UC3:// 8-bit, 3 channel
     {
         QImage image( mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888 );
         return image.rgbSwapped();
     }
 
-        // 8-bit, 1 channel
-    case CV_8UC1:
+    case CV_8UC1:// 8-bit, 1 channel
     {
         static QVector<QRgb>  sColorTable;
         // only create our color table once
@@ -121,26 +118,7 @@ void ZServiceThread::run()
     qDebug("width*height=%d,%d\n",width,height);
     while(!this->m_bExitFlag)
     {
-        //        int recvSize;
-        //        int varSize = sizeof(int);
-        //        UDT::getsockopt(this->m_socket,0,UDT_RCVDATA,&recvSize,&varSize);
-
-        //        //start to read.
-        //        int rdBytes=0;
-        //        if (UDT::ERROR==(rdBytes=UDT::recv(this->m_socket,recvBuffer,recvBufSize,0)))
-        //        {
-        //            qDebug()<<"error:recv(),"<<UDT::getlasterror().getErrorMessage();
-        //            break;
-        //        }
-        //        qDebug()<<"read bytes:"<<rdBytes;
-        //        qDebug()<<recvBuffer;
-        //        recvBytes+=rdBytes;
-
-        //        if(UDT::ERROR==(ss=UDT::send(client, data + ssize, size-ssize,0)))
-        //        {
-        //            qDebug()<<"error:send(),"<<UDT::getlasterror().getErrorMessage();
-        //            break;
-        //        }
+        //get a frome from capture.
         cv::Mat frame;
         capture>>frame;
         if(NULL==frame.data)
@@ -172,15 +150,25 @@ void ZServiceThread::ZTxImgOut(const QImage &preview)
     //send total bytes first.
     char txTotalBuffer[4];
     int2char4(nTxTotal,txTotalBuffer);
+#ifdef USE_TCP
     if(UDT::ERROR==UDT::send(this->m_socket,txTotalBuffer,sizeof(txTotalBuffer),0))
     {
         qDebug()<<"error:send(),"<<UDT::getlasterror().getErrorMessage();
         this->m_bExitFlag=true;
         return;
     }
+#else
+    if(UDT::ERROR==UDT::sendmsg(this->m_socket,txTotalBuffer,sizeof(txTotalBuffer),-1,true))
+    {
+        qDebug()<<"error:send(),"<<UDT::getlasterror().getErrorMessage();
+        this->m_bExitFlag=true;
+        return;
+    }
+#endif
     qDebug("%d,%x\n",nTxTotal,nTxTotal);
     qDebug("%02x %02x %02x %02x\n",txTotalBuffer[0],txTotalBuffer[1],txTotalBuffer[2],txTotalBuffer[3]);
 
+#ifdef USE_TCP
     qint32 nTxBytes=0;
     while(nTxBytes<nTxTotal)
     {
@@ -193,8 +181,21 @@ void ZServiceThread::ZTxImgOut(const QImage &preview)
         }
         nTxBytes+=nTxSingle;
     }
-
-/*
+#else
+    qint32 nTxBytes=0;
+    while(nTxBytes<nTxTotal)
+    {
+        qint32 nTxSingle=UDT::sendmsg(this->m_socket,pTxData+nTxBytes,nTxTotal-nTxBytes,-1,true);
+        if(UDT::ERROR==nTxSingle)
+        {
+            qDebug()<<"error:send(),"<<UDT::getlasterror().getErrorMessage();
+            this->m_bExitFlag=true;
+            return;
+        }
+        nTxBytes+=nTxSingle;
+    }
+#endif
+    /*
     const qint32 nSingleFrame=1024;
     qint32 nTxTimes=nTxTotal/nSingleFrame;
     qint32 nTxRestBytes=nTxTotal%nSingleFrame;

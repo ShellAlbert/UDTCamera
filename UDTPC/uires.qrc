@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/skin">
+        <file>ui_default.qss</file>
+    </qresource>
+    <qresource prefix="/new/prefix1"/>
+</RCC>

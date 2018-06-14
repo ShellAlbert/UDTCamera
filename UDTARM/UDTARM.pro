@@ -28,8 +28,7 @@ SOURCES += main.cpp \
     udt4/src/packet.cpp \
     udt4/src/queue.cpp \
     udt4/src/window.cpp \
-    zservicethread.cpp \
-    cameraframegrabber.cpp
+    zservicethread.cpp
 
 HEADERS += \
     udt4/src/api.h \
@@ -46,8 +45,7 @@ HEADERS += \
     udt4/src/queue.h \
     udt4/src/udt.h \
     udt4/src/window.h \
-    zservicethread.h \
-    cameraframegrabber.h
+    zservicethread.h
 
 DEFINES += __MINGW__
 LIBS += -lwsock32 -lws2_32
